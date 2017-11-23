@@ -1,0 +1,25 @@
+Batch Size: 32
+Learning Rate: 0.0001
+Number of epochs: 10
+Kernel dimensions: 3,4,5
+Number of Kernel: 64
+
+Test set: Average loss: 130.8838, Accuracy: 8548/9934 (86%)
+
+Test set: Average loss: 106.4133, Accuracy: 8697/9934 (88%)
+
+Test set: Average loss: 99.9917, Accuracy: 8744/9934 (88%)
+
+Test set: Average loss: 96.0134, Accuracy: 8818/9934 (89%)
+
+Test set: Average loss: 95.0353, Accuracy: 8834/9934 (89%)
+
+Test set: Average loss: 96.7302, Accuracy: 8779/9934 (88%)
+
+Test set: Average loss: 94.8881, Accuracy: 8844/9934 (89%)
+
+Test set: Average loss: 98.3414, Accuracy: 8781/9934 (88%)
+
+Test set: Average loss: 96.3126, Accuracy: 8844/9934 (89%)
+
+Test set: Average loss: 97.6070, Accuracy: 8820/9934 (89%)
