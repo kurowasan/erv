@@ -19,9 +19,9 @@ import dataset_loader
 parser = argparse.ArgumentParser(description='Cytotoxicity classifier')
 parser.add_argument('--batch-size', type=int, default=32, metavar='N',
                     help='input batch size for training (default: 32)')
-parser.add_argument('--lr', type=float, default=0.0001, metavar='LR',
+parser.add_argument('--lr', type=float, default=0.00001, metavar='LR',
                     help='learning rate (default: 0.0001)')
-parser.add_argument('--n-epochs', type=int, default=10, metavar='N',
+parser.add_argument('--n-epochs', type=int, default=30, metavar='N',
                     help='number of epochs to train (default: 10)')
 parser.add_argument('--kernel-dim', type=str, default='3,4,5',
                     help='comma-separated kernel dimension')
@@ -54,14 +54,49 @@ else:
 
 # Load the data and format them
 data = dataset_loader.PeptideSequence(FILENAME)
+# np.random.seed(0)
+
+test_set_completed = 0
+proteins = data.getProteinsName()
+tmp_proteins = data.getProteinsName()
+train_data = []
+test_data = []
+
+while(not test_set_completed):
+    rand = np.random.randint(len(tmp_proteins))
+    protein_chosen = tmp_proteins[rand]
+    idx_train = [i for i, x in enumerate(proteins) if x == protein_chosen]
+    train_data.extend(idx_train)
+    tmp_proteins = [x for i, x in enumerate(tmp_proteins) if x != protein_chosen]
+
+    rand = np.random.randint(len(tmp_proteins))
+    protein_chosen = tmp_proteins[rand]
+    idx_test = [i for i, x in enumerate(proteins) if x == protein_chosen]
+    test_data.extend(idx_test)
+    tmp_proteins = [x for i, x in enumerate(tmp_proteins) if x != protein_chosen]
+
+    if(len(test_data) >= (1 - TRAIN_RATIO)*len(data)):
+        test_set_completed = 1
+
+for protein in set(tmp_proteins):
+    for i, x in enumerate(proteins):
+        if(x == protein):
+            train_data.append(i)
+
+print("Effective test dataset ratio: ")
+print(len(test_data)*1./len(data))
+
+'''
 idx = np.arange(len(data))
-np.random.seed(0)
 train_data = idx[:(int)(len(data) * TRAIN_RATIO)]
 test_data = idx[(int)(len(data) * TRAIN_RATIO):]
+'''
+
 np.random.shuffle(train_data)
 np.random.shuffle(test_data)
 train_sampler = sampler.SubsetRandomSampler(train_data)
 test_sampler = sampler.SubsetRandomSampler(test_data)
+
 train_loader = dataloader.DataLoader(data, batch_size=args.batch_size, sampler=train_sampler)
 test_loader = dataloader.DataLoader(data, batch_size=args.batch_size, sampler=test_sampler)
 
@@ -78,8 +113,12 @@ if CUDA:
     model.cuda()
 
 def train(epoch):
+    train_loss = 0
+    correct = 0
     model.train()
     n = int(len(train_data)/args.batch_size)
+
+    print('Epoch {}: '.format(epoch))
 
     for idx_batch, (x, y0, y1) in enumerate(train_loader):
         x = x.type(dtype)
@@ -90,11 +129,20 @@ def train(epoch):
         optimizer.zero_grad()
         output_cyto, output_mask = model(x)
         loss = loss_function(output_cyto, y1)
+        train_loss += loss.data[0]
         loss.backward()
         optimizer.step()
 
+        prediction = output_cyto.data.max(1, keepdim=True)[1]
+        correct += prediction.eq(y1.data.view_as(prediction)).cpu().sum()
+
+
         if idx_batch % PRINT_EVERY == 0:
             update_progress(int(idx_batch * 100.0/n), loss.data[0])
+
+    accuracy_msg = '\nTrain set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)'.format(
+        train_loss * 1./len(train_data), correct, len(train_data), 100. * correct / len(train_data))
+    print(accuracy_msg)
 
 def test(epoch):
     model.eval()
@@ -115,8 +163,8 @@ def test(epoch):
         prediction = output_cyto.data.max(1, keepdim=True)[1]
         correct += prediction.eq(y1.data.view_as(prediction)).cpu().sum()
 
-    accuracy_msg = '\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-        test_loss, correct, len(test_data), 100. * correct / len(test_data))
+    accuracy_msg = 'Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+        test_loss * 1./len(test_data), correct, len(test_data), 100. * correct / len(test_data))
 
     print(accuracy_msg)
     log(accuracy_msg)
