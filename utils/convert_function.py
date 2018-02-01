@@ -13,11 +13,11 @@ peptide in the protein."""
 import cPickle as pickle
 import numpy as np
 
-INPUT_FILE = 'viralpeptide_IEDB.p'
-OUTPUT_FILE = 'viralpeptidecytotoxdataset.p'
+INPUT_FILE = '../data/viralpeptide_IEDB.p'
+OUTPUT_FILE = '../data/cytotox_dataset_long_sequence.p'
 REWEIGHT_SAMPLE = True
 NB_SAMPLE = 5   # number of time to sample the same sequence
-SEQUENCE_LEN = 99
+SEQUENCE_LEN = 99*3
 VERBOSE = True
 WILDCARD = '_'
 
