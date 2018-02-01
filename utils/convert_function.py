@@ -10,6 +10,8 @@ peptide in the protein."""
         name: string
     }}
 """
+
+#### TO DO : keep peptides with one error
 import cPickle as pickle
 import numpy as np
 
