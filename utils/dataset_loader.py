@@ -28,12 +28,20 @@ class PeptideSequence(Dataset):
             index = -1
         return index
 
+    def getProteinsName(self):
+        proteins = []
+
+        for i in range(len(self.dict)):
+            proteins.append(self.dict[i][0])
+
+        return proteins
+
     def __len__(self):
         return len(self.dict)
 
     def __getitem__(self, idx):
         """Data structure:
-            [nucleo_seq, mask, cytotoxicity]
+            [protein_name, nucleo_seq, mask, cytotoxicity]
             encode x as onehot
         """
         seq = self.dict[idx]
@@ -44,25 +52,25 @@ class PeptideSequence(Dataset):
             x = np.zeros((self.sequence_len, self.n_codon)).astype('float64')
             for i in range(self.sequence_len):
                 j = i*3
-                if self.codonToIndex(seq[0][j:j+3]) == -1:
+                if self.codonToIndex(seq[1][j:j+3]) == -1:
                     x[i, 64] = 1.
                 else:
-                    x[i, self.codonToIndex(seq[0][j:j+3])] = 1.
-                y0[i] = str(seq[1][j])
+                    x[i, self.codonToIndex(seq[1][j:j+3])] = 1.
+                y0[i] = str(seq[2][j])
         else:
             x = np.zeros(self.sequence_len).astype('int')
             for i in range(self.sequence_len):
                 j = i*3
-                if self.codonToIndex(seq[0][j:j+3]) == -1:
+                if self.codonToIndex(seq[1][j:j+3]) == -1:
                     x[i] = 64
                 else:
-                    x[i] = self.codonToIndex(seq[0][j:j+3])
-                y0[i] = str(seq[1][j])
+                    x[i] = self.codonToIndex(seq[1][j:j+3])
+                y0[i] = str(seq[2][j])
 
 
-        if seq[2] == 'Positive':
+        if seq[3] == 'Positive':
             y1 = 1
-        elif seq[2] == 'Negative':
+        elif seq[3] == 'Negative':
             y1 = 0
         else:
             y1 = 0 # to remove, unknown!!!
