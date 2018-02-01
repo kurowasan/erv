@@ -26,13 +26,17 @@ def prepare_tables(train_data):
 		seq = window[0]
 		### run through the sequence by 3 nucleotides	
 		for i in xrange(0,len(seq)-(KLENGTH-1)):
-		codon = seq[i:i+KLENGTH]
-		if codon not in kmer_probs[types[int(if(positive))]]: #chose proper dictionnary
-			kmer_probs[types[int(if(positive))]][codon] = 1
-			kmer_probs[types[int(if(positive))]]['total'] = 1
-		else:
-			kmer_probs[types[int(if(positive))]][codon] += 1
-			kmer_probs[types[int(if(positive))]]['total'] += 1
+			codon = seq[i:i+KLENGTH]
+			if positive:
+				part = 1
+			else:
+				part = 0
+			if codon not in kmer_probs[types[part]]: #chose proper dictionnary
+				kmer_probs[types[part]][codon] = 1
+				kmer_probs[types[part]]['total'] = 1
+			else:
+				kmer_probs[types[part]][codon] += 1
+				kmer_probs[types[part]]['total'] += 1
 
 	### conditionning the kmer tables to log probabilities (from counts)
 	for typ in kmer_probs.keys():
