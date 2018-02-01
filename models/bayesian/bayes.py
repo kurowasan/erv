@@ -47,7 +47,6 @@ def prepare_tables(train_data):
 	return kmer_probs
 
 def bayes_predict(kmer_probs,test_set):
-	def predict_viral(pos_freq, neg_freq, test_pos, test_neg):
 	y_pred = []
 	y_true = []
 	types = ['neg','pos']
