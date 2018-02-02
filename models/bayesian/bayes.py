@@ -4,7 +4,7 @@ import random
 from random import shuffle
 import numpy
 from sklearn.metrics import roc_curve, auc, confusion_matrix
-import metrics
+
 
 
 KLENGTH = 3
