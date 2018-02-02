@@ -107,6 +107,7 @@ model = model_cnn.CNN(N_INPUT, N_OUTPUT1, args.n_kernel, args.kernel_dim)
 
 
 weight = torch.cuda.FloatTensor(2)
+
 weight[0] = 0.5
 weight[1] = 0.5
 
@@ -190,7 +191,7 @@ log("Batch Size: {} \nLearning Rate: {} \nNumber of epochs: {} \nKernel dimensio
 kmer_probs = bayes.prepare_tables(train_loader)
 y_pred, y_true = bayes.bayes_predict(kmer_probs,test_loader)
 tn, fp, fn, tp, auc, acc = bayes.calculate_statistics(y_pred, y_true)
-bayes.bayes_log(tn, fp, fn, tp, auc, acc)
+bayes.bayes_log(tn, fp, fn, tp, auc, acc, log_file)
 
 
 for epoch in range(args.n_epochs):

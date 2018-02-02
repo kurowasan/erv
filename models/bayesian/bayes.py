@@ -3,7 +3,8 @@ import cPickle as pickle
 import random
 from random import shuffle
 import numpy
-from sklearn.metrics import roc_curve, auc, confusion_matrix
+from sklearn.metrics import roc_curve, confusion_matrix
+from sklearn.metrics import auc as AUC
 
 
 
@@ -108,11 +109,11 @@ def calculate_statistics(y_pred,y_true):
 	print ('False Positives: '+str(fp))
 	print ('False Negatives: '+str(fn))
 	fpr, tpr, thresholds = roc_curve(y_true, y_pred, pos_label=1)
-	print ('AUC ' + str(metrics.auc(fpr, tpr)))
+	print ('AUC ' + str(AUC(fpr, tpr)))
 	print ('Accuracy: '+ str((float(tp+tn)/(tp+tn+fp+fn)*100))+'%')
-	return tn,fp,fn,tp,metrics.auc(fpr, tpr),str((float(tp+tn)/(tp+tn+fp+fn)*100))
+	return tn,fp,fn,tp,AUC(fpr, tpr),str((float(tp+tn)/(tp+tn+fp+fn)*100))
 
-def bayes_log(tn, fp, fn, tp, auc, acc):
+def bayes_log(tn, fp, fn, tp, auc, acc, log_file):
     with open(log_file, 'a') as f:
         f.write('\n')
         f.write(str('*'*10)+'\n')
