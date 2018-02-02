@@ -14,6 +14,7 @@ import time
 import os, sys
 sys.path.append(os.path.abspath('../../utils'))
 import dataset_loader
+import bayes
 
 # Settings
 parser = argparse.ArgumentParser(description='Cytotoxicity classifier')
@@ -175,6 +176,13 @@ def list2str(l):
 def log(txt):
     with open(log_file, 'a') as f:
         f.write(txt)
+
+### benchmark on Bayes model
+kmer_probs = bayes.prepare_tables(train_loader)
+y_pred, y_true = bayes.bayes_predict(kmer_probs,test_loader)
+tn,fp,fn,tp,auc = calculate_statistics(y_pred, y_true)
+
+
 
 log_file = LOG_PATH + "CNN_" + time.strftime("%Y_%m_%d_%H_%M") + ".txt"
 log("Batch Size: {} \nLearning Rate: {} \nNumber of epochs: {} \nKernel dimensions: {} \n Number of Kernel: {}\n".format(

@@ -19,11 +19,11 @@ def prepare_tables(train_data):
 	kmer_probs['neg'] = {}
 	kmer_probs['pos'] = {}
 	types = ['neg','pos']
-	for window in train_data:
-		if window[2]>=0.5:
+	for x, y0, y1 in train_loader:
+		if y1>=0.5:
 			positive = True
 
-		seq = window[0]
+		seq = x
 		### run through the sequence by 3 nucleotides	
 		for i in xrange(0,len(seq)-(KLENGTH-1)):
 			codon = seq[i:i+KLENGTH]
@@ -51,25 +51,26 @@ def bayes_predict(kmer_probs,test_set):
 	y_true = []
 	types = ['neg','pos']
 
-	for window in test_set:
+	for x, y0, y1 in test_loader:
 		### adding the correct class
-		if window[2] >=0.5:
+		if y1 >=0.5:
 			y_true.append(1)
 		else:
 			y_true.append(0)
 
 		proba_pos = 0
 		proba_neg = 0
-		seq = window[0]
+		seq = x
 		for i in xrange(0,len(seq)-(KLENGTH-1)):
 			codon = seq[i:i+KLENGTH]
 			if codon in kmer_probs['neg']:
 				proba_neg+=kmer_probs['neg'][codon]
 			if codon in kmer_probs['pos']:
-				proba_neg+=kmer_probs['pos'][codon]
+				proba_pos+=kmer_probs['pos'][codon]
 			
 		pred = numpy.argmax([proba_neg, proba_pos])
 		y_pred.append(pred)
+	return y_pred,y_true
 
 def calculate_statistics(y_pred,y_true):
 	tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
@@ -80,7 +81,7 @@ def calculate_statistics(y_pred,y_true):
 	print 'False Negatives: '+str(fn)
 	fpr, tpr, thresholds = metrics.roc_curve(y_true, y_pred, pos_label=1)
 	print 'AUC ' + str(metrics.auc(fpr, tpr))
-	return tn,fp,fn,tp,str(metrics.auc(fpr, tpr))
+	#return tn,fp,fn,tp,str(metrics.auc(fpr, tpr))
 
 
 
