@@ -17,7 +17,7 @@ class PeptideSequence(Dataset):
 
     def __init__(self, filename, onehot=True):
         self.dict = pickle.load(open(filename, "rb"))
-        self.sequence_len = len(self.dict[0][0])/3
+        self.sequence_len = len(self.dict[0][1])/3
         self.n_codon = len(self.all_codon) + 1
         self.onehot = onehot
 

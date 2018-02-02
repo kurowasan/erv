@@ -12,9 +12,11 @@ import numpy as np
 import time
 
 import os, sys
+sys.path.append(os.path.abspath('../bayesian/'))
+import bayes
 sys.path.append(os.path.abspath('../../utils'))
 import dataset_loader
-import bayes
+
 
 # Settings
 parser = argparse.ArgumentParser(description='Cytotoxicity classifier')
@@ -37,7 +39,7 @@ LOG_PATH = '../../log/'
 N_INPUT = len(dataset_loader.PeptideSequence.all_codon) + 1
 N_OUTPUT1 = 2
 TRAIN_RATIO = 0.9
-CUDA = True
+CUDA = False
 PRINT_EVERY = 10
 
 def update_progress(progress, loss):
@@ -103,7 +105,8 @@ test_loader = dataloader.DataLoader(data, batch_size=args.batch_size, sampler=te
 
 model = model_cnn.CNN(N_INPUT, N_OUTPUT1, args.n_kernel, args.kernel_dim)
 
-weight = torch.cuda.FloatTensor(2)
+weight = torch.FloatTensor(2)
+#weight = torch.cuda.FloatTensor(2)
 weight[0] = 0.5
 weight[1] = 0.5
 
@@ -180,7 +183,7 @@ def log(txt):
 ### benchmark on Bayes model
 kmer_probs = bayes.prepare_tables(train_loader)
 y_pred, y_true = bayes.bayes_predict(kmer_probs,test_loader)
-tn,fp,fn,tp,auc = calculate_statistics(y_pred, y_true)
+bayes.calculate_statistics(y_pred, y_true)
 
 
 
