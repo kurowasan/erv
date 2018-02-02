@@ -108,7 +108,8 @@ def calculate_statistics(y_pred,y_true):
 	print ('False Negatives: '+str(fn))
 	fpr, tpr, thresholds = metrics.roc_curve(y_true, y_pred, pos_label=1)
 	print ('AUC ' + str(metrics.auc(fpr, tpr)))
-	#return tn,fp,fn,tp,str(metrics.auc(fpr, tpr))
+	print ('Accuracy: '+ str((float(tp+tn)/(tp+tn+fp+fn)*100))+'%')
+	return tn,fp,fn,tp,metrics.auc(fpr, tpr),str((float(tp+tn)/(tp+tn+fp+fn)*100))
 
 
 
