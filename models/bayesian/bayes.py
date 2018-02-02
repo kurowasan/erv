@@ -111,7 +111,19 @@ def calculate_statistics(y_pred,y_true):
 	print ('Accuracy: '+ str((float(tp+tn)/(tp+tn+fp+fn)*100))+'%')
 	return tn,fp,fn,tp,metrics.auc(fpr, tpr),str((float(tp+tn)/(tp+tn+fp+fn)*100))
 
-
+def bayes_log(tn, fp, fn, tp, auc, acc):
+    with open(log_file, 'a') as f:
+        f.write('\n')
+        f.write(str('*'*10)+'\n')
+        f.write('Bayes model results:'+'\n')
+        f.write ('True Positives: '+str(tp)+'\n')
+        f.write ('True Negative: '+str(tn)+'\n')
+        f.write ('False Positives: '+str(fp)+'\n')
+        f.write ('False Negatives: '+str(fn)+'\n')
+        f.write ('AUC ' + str(auc)+'\n')
+        f.write ('Accuracy: '+str(acc)+'%'+'\n')
+        f.write(str('*'*10)+'\n')
+        f.write('\n')
 
 
 

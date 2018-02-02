@@ -39,7 +39,7 @@ LOG_PATH = '../../log/'
 N_INPUT = len(dataset_loader.PeptideSequence.all_codon) + 1
 N_OUTPUT1 = 2
 TRAIN_RATIO = 0.9
-CUDA = False
+CUDA = True
 PRINT_EVERY = 10
 
 def update_progress(progress, loss):
@@ -105,8 +105,8 @@ test_loader = dataloader.DataLoader(data, batch_size=args.batch_size, sampler=te
 
 model = model_cnn.CNN(N_INPUT, N_OUTPUT1, args.n_kernel, args.kernel_dim)
 
-weight = torch.FloatTensor(2)
-#weight = torch.cuda.FloatTensor(2)
+
+weight = torch.cuda.FloatTensor(2)
 weight[0] = 0.5
 weight[1] = 0.5
 
@@ -180,19 +180,6 @@ def log(txt):
     with open(log_file, 'a') as f:
         f.write(txt)
 
-def bayes_log(tn, fp, fn, tp, auc, acc):
-    with open(log_file, 'a') as f:
-        f.write('\n')
-        f.write(str('*'*10)+'\n')
-        f.write('Bayes model results:'+'\n')
-        f.write ('True Positives: '+str(tp)+'\n')
-        f.write ('True Negative: '+str(tn)+'\n')
-        f.write ('False Positives: '+str(fp)+'\n')
-        f.write ('False Negatives: '+str(fn)+'\n')
-        f.write ('AUC ' + str(auc)+'\n')
-        f.write ('Accuracy: '+str(acc)+'%'+'\n')
-        f.write(str('*'*10)+'\n')
-        f.write('\n')
 
 log_file = LOG_PATH + "CNN_" + time.strftime("%Y_%m_%d_%H_%M") + ".txt"
 log("Batch Size: {} \nLearning Rate: {} \nNumber of epochs: {} \nKernel dimensions: {} \n Number of Kernel: {}\n".format(
@@ -203,10 +190,7 @@ log("Batch Size: {} \nLearning Rate: {} \nNumber of epochs: {} \nKernel dimensio
 kmer_probs = bayes.prepare_tables(train_loader)
 y_pred, y_true = bayes.bayes_predict(kmer_probs,test_loader)
 tn, fp, fn, tp, auc, acc = bayes.calculate_statistics(y_pred, y_true)
-bayes_log(tn, fp, fn, tp, auc, acc)
-
-
-
+bayes.bayes_log(tn, fp, fn, tp, auc, acc)
 
 
 for epoch in range(args.n_epochs):
