@@ -43,11 +43,8 @@ else:
     ### ROC curve
     plt.figure()
     y = pd.read_csv(os.path.join(str(args.path),'roc_valid.txt'))
-    import ipdb;ipdb.set_trace()
     y_pred = y['prediction'].values
     y_test = y['target'].values
-    # y_pred = np.loadtxt(os.path.join(str(args.path), 'roc_valid.txt'))
-    # y_pred, y_test
 
     plt.hist(y_pred[y_test==0],label='0',alpha=0.2)
     plt.hist(y_pred[y_test==1], label='1',alpha=0.2)
@@ -58,8 +55,7 @@ else:
     roc_auc = auc(fpr, tpr)
     plt.figure()
 
-    lw = 2
-    plt.plot(fpr, tpr, color='green', lw=lw, label='ROC curve (area = {0:.4f})'.format(float(roc_auc)))
+    plt.plot(fpr, tpr, color='green', lw=2, label='ROC curve (area = {0:.4f})'.format(float(roc_auc)))
     plt.plot([0, 1], [0, 1], color='navy', lw=0.25, linestyle='--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
