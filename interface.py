@@ -4,15 +4,6 @@ import getpass
 import argparse
 
 def parse():
-    mila = True
-
-    if mila:
-        data_root = '/Tmp/{}/data/erv'.format(getpass.getuser())
-        output = '/data/milatmp1/{}/erv/'.format(getpass.getuser())
-    else:
-        data_root = 'data/'
-        output = ''
-
     parser = argparse.ArgumentParser(description='Cytotoxicity classifier')
     # arguments related to the training
     parser.add_argument('--n-epochs', type=int, default=20, help='number of epochs to train (default: 20)')
@@ -20,18 +11,28 @@ def parse():
     parser.add_argument('--lr', type=float, default=0.0001, help='learning rate (default: 0.0001)')
     parser.add_argument('--n-hidden', nargs='+', type=int, default=[100, 1], help='list of number of hidden units (default: 100,1)')
     parser.add_argument('--only-aa', action='store_true', help='if specified, does not use blosum and kpa, etc')
+    parser.add_argument('-m', '--mila', action='store_true', help='use if run on cluster')
     # arguments related to the files path and other
-    parser.add_argument('--data-root', default=data_root, help='Relative path to the input dataset')
+    parser.add_argument('--data-root', default='', help='Relative path to the input dataset')
     parser.add_argument('--file-x', default='new_input.txt', help='Filename of the input dataset')
     parser.add_argument('--file-y', default='new_targets.txt', help='Filename of the target dataset')
-    parser.add_argument('--output', default=output, help='Relative path where the result will be logged')
+    parser.add_argument('--output', default='', help='Relative path where the result will be logged')
     parser.add_argument('--load-config', default='n', help='Load configuration from a json file located in the output path')
     parser.add_argument('--verbose', action='store_false', help='Print messages if active (active by default)')
     parser.add_argument('--save-model', default='', help='name of the file for the model parameters. If not specified do not save the parameters')
     # parser.add_argument('--resume', default='n', help='resume the training and load the model parameters')
     args = parser.parse_args()
     hparam = vars(args)
+
+    if hparam['mila']:
+        data_root = '/Tmp/{}/datasets/erv/'.format(getpass.getuser())
+        output = '/data/milatmp1/{}/erv/'.format(getpass.getuser())
+    else:
+        data_root = 'data/'
+        output = ''
+
     hparam['output'] = os.path.join(output, hparam['output'])
+    hparam['data_root'] = os.path.join(data_root, hparam['data_root'])
 
     # if there is no existing config file,
     # create path and a new config file

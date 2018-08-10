@@ -38,8 +38,8 @@ class PeptideLoader(Dataset):
         return np.eye(len(self.all_aa))[i]
 
     def normalize(self, dic):
-        a = np.array([val for _, val in dic.iteritems()])
-        for k,v in dic.iteritems():
+        a = np.array([val for _, val in dic.items()])
+        for k,v in dic.items():
             dic[k] =(dic[k] - np.min(a))*1./(np.max(a) - np.min(a))
         return dic
 

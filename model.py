@@ -47,7 +47,7 @@ class MLP(nn.Module):
         super(MLP, self).__init__()
         self.mlp = nn.Sequential()
         names = ['layer_{}'.format(i) for i in range(len(layer_list))]
-        non_linear = ['sigmoid'] * (len(layer_list) - 1) + ['sigmoid']
+        non_linear = ['relu'] * (len(layer_list) - 1) + ['sigmoid']
         for name, h1, h2 in zip(names, layer_list[:-1], layer_list[1:]):
             self.mlp.add_module(name, DenseLayer(h1, h2))
 

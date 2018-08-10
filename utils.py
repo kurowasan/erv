@@ -9,7 +9,7 @@ from torch.autograd import Variable
 
 def update_progress(progress, loss):
      sys.stdout.write('\r[{0}] {1}%   loss: {2}'.format(
-         '#'*(progress/10) + ' '*(10 - progress/10), progress, loss)
+         '#'*int(progress/10) + ' '*int(10 - progress/10), progress, loss)
      )
 
 def print_progress(hparam, idx_batch, n_batch, loss):
