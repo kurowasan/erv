@@ -4,14 +4,14 @@ import getpass
 import argparse
 
 def parse():
-    mila = False
+    mila = True
 
     if mila:
-        data_root = '/Tmp/{}/data/'.format(getpass.getuser())
+        data_root = '/Tmp/{}/data/erv'.format(getpass.getuser())
         output = '/data/milatmp1/{}/erv/'.format(getpass.getuser())
     else:
         data_root = 'data/'
-        output = 'exp/'
+        output = ''
 
     parser = argparse.ArgumentParser(description='Cytotoxicity classifier')
     # arguments related to the training
@@ -31,6 +31,7 @@ def parse():
     # parser.add_argument('--resume', default='n', help='resume the training and load the model parameters')
     args = parser.parse_args()
     hparam = vars(args)
+    hparam['output'] = os.path.join(output, hparam['output'])
 
     # if there is no existing config file,
     # create path and a new config file
