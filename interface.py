@@ -11,11 +11,12 @@ def parse():
     parser.add_argument('--lr', type=float, default=0.0001, help='learning rate (default: 0.0001)')
     parser.add_argument('--n-hidden', nargs='+', type=int, default=[100, 1], help='list of number of hidden units (default: 100,1)')
     parser.add_argument('--only-aa', action='store_true', help='if specified, does not use blosum and kpa, etc')
+    parser.add_argument('--hla', action='store_true', help='set to true if dataset contains hla')
     parser.add_argument('-m', '--mila', action='store_true', help='use if run on cluster')
     # arguments related to the files path and other
     parser.add_argument('--data-root', default='', help='Relative path to the input dataset')
-    parser.add_argument('--file-x', default='new_input.txt', help='Filename of the input dataset')
-    parser.add_argument('--file-y', default='new_targets.txt', help='Filename of the target dataset')
+    parser.add_argument('--file-x', default='new_input_hla.txt', help='Filename of the input dataset')
+    parser.add_argument('--file-y', default='new_targets_hla.txt', help='Filename of the target dataset')
     parser.add_argument('--output', default='', help='Relative path where the result will be logged')
     parser.add_argument('--load-config', default='n', help='Load configuration from a json file located in the output path')
     parser.add_argument('--verbose', action='store_false', help='Print messages if active (active by default)')
@@ -64,5 +65,6 @@ def parse():
     hparam['curve_loss_valid'] = os.path.join(hparam['output'], 'curve_loss_valid.txt')
     hparam['curve_accuracy_valid'] = os.path.join(hparam['output'], 'curve_accuracy_valid.txt')
     hparam['log_curve'] = True
+    hparam['keep_best'] = True
 
     return hparam

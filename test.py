@@ -48,7 +48,7 @@ def flow(hparam, loader, epoch, mode='valid'): #mask=None
 
     accuracy_msg = '\n{} set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)'.format(
         mode, train_loss * 1./n, nb_correct, n, 100.*nb_correct/n)
-    print("using the mask #{}".format(mask))
+    # print("using the mask #{}".format(mask))
     print(accuracy_msg)
     # return nb_correct
 

@@ -92,6 +92,7 @@ def flow(hparam, loader, epoch, mode, log_roc=False, log_mode=''):
         accuracy_msg = '\n{} set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)'.format(
             mode, train_loss * 1./n, nb_correct, n, 100.*nb_correct/n)
         print(accuracy_msg)
+    return train_loss
 
 
 if __name__ == '__main__':
@@ -123,19 +124,14 @@ if __name__ == '__main__':
         double_type = torch.LongTensor
 
     # train and evaluate the model
+    highest_loss = 0
     for epoch in range(hparam['n_epochs']):
         flow(hparam, train_loader, epoch, 'train')
-        flow(hparam, valid_loader, epoch, 'eval')
+        current_loss = flow(hparam, valid_loader, epoch, 'eval')
+        if hparam['keep_best'] and hparam['save_model'] != '' and (epoch==0 or current_loss < highest_loss):
+            print("Saving best model!")
+            torch.save(model.state_dict(), hparam['output'] + '/' + hparam['save_model'] )
+            highest_loss = current_loss
 
-    # Test on self_peptides
-    # hparam['file_x'] = "mice_input.txt"
-    # hparam['file_y'] = "mice_targets.txt"
-    # hparam['train_ratio'] = 0.9
-    # hparam['valid_ratio'] = 0.05
-    # train_loader, valid_loader, test_loader, n_input = loader.load(hparam, False)
-    # get prediction for ROC curves
-    flow(hparam, train_loader, 1, 'eval', True, 'train')
-    flow(hparam, valid_loader, 1, 'eval', True, 'eval')
-
-    if hparam['save_model'] != '':
+    if hparam['save_model'] != '' and not hparam['keep_best']:
         torch.save(model.state_dict(), hparam['output'] + '/' + hparam['save_model'] )
